@@ -21,8 +21,9 @@ const nextConfig: NextConfig = {
       config.externals = [
         ...existingExternals,
         ({ request }: { request?: string }, callback: (err?: Error | null, result?: string) => void) => {
-          // Externalize any react import so Node.js resolves the same instance
-          if (request && /^react(\/|$)/.test(request) && !request.includes('react-dom')) {
+          // Externalize react + react-dom so Node.js module cache gives one shared instance
+          // (react-dom sets the dispatcher; user code reads it — must be same object)
+          if (request && /^react(-dom)?(\/|$)/.test(request)) {
             return callback(null, `commonjs ${request}`)
           }
           callback()
