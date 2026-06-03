@@ -90,7 +90,7 @@ export default function SiteDetailPage() {
         </div>
         <Badge variant={site.isActive ? 'success' : 'default'}>{site.isActive ? 'Active' : 'Inactive'}</Badge>
         {!editing && (
-          <Button size="sm" variant="outline" onClick={startEdit}>
+          <Button size="sm" variant="secondary" onClick={startEdit}>
             <Edit2 className="w-3.5 h-3.5 mr-1.5" />Edit
           </Button>
         )}
@@ -218,7 +218,7 @@ export default function SiteDetailPage() {
 
           <div className="flex gap-3">
             <Button type="submit" loading={updateSite.isPending}><Save className="w-4 h-4 mr-1.5" />Save</Button>
-            <Button type="button" variant="outline" onClick={() => setEditing(false)}><X className="w-4 h-4 mr-1.5" />Cancel</Button>
+            <Button type="button" variant="secondary" onClick={() => setEditing(false)}><X className="w-4 h-4 mr-1.5" />Cancel</Button>
           </div>
         </form>
       )}
@@ -263,7 +263,7 @@ export default function SiteDetailPage() {
                   </div>
                   <div className="col-span-2 flex gap-3">
                     <Button type="submit" size="sm" loading={addContract.isPending}>Save Contract</Button>
-                    <Button type="button" size="sm" variant="outline" onClick={() => setShowContractForm(false)}>Cancel</Button>
+                    <Button type="button" size="sm" variant="secondary" onClick={() => setShowContractForm(false)}>Cancel</Button>
                   </div>
                 </form>
               </CardContent>
@@ -311,7 +311,7 @@ export default function SiteDetailPage() {
                   className="input w-full font-mono text-sm" placeholder="Enter standing instructions for guards at this site..." />
                 <div className="flex gap-3 mt-4">
                   <Button type="submit" size="sm" loading={updateSite.isPending}><Save className="w-4 h-4 mr-1.5" />Save</Button>
-                  <Button type="button" size="sm" variant="outline" onClick={() => setEditing(false)}>Cancel</Button>
+                  <Button type="button" size="sm" variant="secondary" onClick={() => setEditing(false)}>Cancel</Button>
                 </div>
               </form>
             ) : (
@@ -321,7 +321,7 @@ export default function SiteDetailPage() {
                 ) : (
                   <p className="text-sm text-gray-400">No post orders have been set for this site.</p>
                 )}
-                <Button size="sm" variant="outline" className="mt-4" onClick={startEdit}>
+                <Button size="sm" variant="secondary" className="mt-4" onClick={startEdit}>
                   <Edit2 className="w-3.5 h-3.5 mr-1.5" />{site.postOrders ? 'Edit' : 'Add'} Post Orders
                 </Button>
               </div>

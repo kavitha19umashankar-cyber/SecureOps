@@ -177,7 +177,7 @@ export default function SalaryStructuresPage() {
                 <Button type="submit" loading={create.isPending || update.isPending}>
                   <Save className="w-4 h-4 mr-1.5" />{editId ? 'Update' : 'Create'} Structure
                 </Button>
-                <Button type="button" variant="outline" onClick={resetForm}>
+                <Button type="button" variant="secondary" onClick={resetForm}>
                   <X className="w-4 h-4 mr-1.5" />Cancel
                 </Button>
               </div>
@@ -211,7 +211,7 @@ export default function SalaryStructuresPage() {
                         className="text-gray-400 hover:text-gray-600 p-1">
                         {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                       </button>
-                      <Button size="sm" variant="outline" onClick={() => startEdit(s)}>
+                      <Button size="sm" variant="secondary" onClick={() => startEdit(s)}>
                         <Edit2 className="w-3.5 h-3.5 mr-1" />Edit
                       </Button>
                       <button onClick={() => deleteMutation.mutate(s.id)}

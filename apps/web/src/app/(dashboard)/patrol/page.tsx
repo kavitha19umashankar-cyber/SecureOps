@@ -112,7 +112,7 @@ export default function PatrolPage() {
               </div>
               <div className="col-span-2 flex gap-3">
                 <Button type="submit" loading={create.isPending}>Create Route</Button>
-                <Button type="button" variant="outline" onClick={() => setShowForm(false)}>Cancel</Button>
+                <Button type="button" variant="secondary" onClick={() => setShowForm(false)}>Cancel</Button>
               </div>
             </form>
           </CardContent>
@@ -207,7 +207,7 @@ export default function PatrolPage() {
                           </div>
                           <div className="col-span-2 flex gap-2">
                             <Button type="submit" size="sm" loading={addCheckpoint.isPending}>Add</Button>
-                            <Button type="button" size="sm" variant="outline" onClick={() => setAddingCpTo(null)}>Cancel</Button>
+                            <Button type="button" size="sm" variant="secondary" onClick={() => setAddingCpTo(null)}>Cancel</Button>
                           </div>
                         </form>
                       )}
