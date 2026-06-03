@@ -74,5 +74,5 @@ export interface Allocation {
   role: string
   status: 'assigned' | 'confirmed' | 'cancelled'
   createdAt: string
-  employee?: Pick<import('./employee').Employee, 'id' | 'name' | 'employeeType' | 'photoUrl'>
+  employee?: Pick<import('./employee.js').Employee, 'id' | 'name' | 'employeeType' | 'photoUrl'>
 }
