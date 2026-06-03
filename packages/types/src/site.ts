@@ -23,6 +23,7 @@ export interface Site {
   lat: number
   lng: number
   radiusMeters: number
+  photoCheckinIntervalMinutes: number
   siteType: SiteType
   photoUrls: string[]
   postOrders?: string

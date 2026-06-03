@@ -149,7 +149,7 @@ export default function ShiftsPage() {
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">Shift Type</label>
               <select {...register('template')} className="input" onChange={e => {
-                const t = e.target.value as keyof typeof TEMPLATES
+                const t = e.target.value as 'morning' | 'afternoon' | 'night' | 'custom'
                 setValue('template', t)
                 if (TEMPLATES[t]) {
                   setValue('startTime', TEMPLATES[t]!.start)

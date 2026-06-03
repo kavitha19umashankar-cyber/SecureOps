@@ -17,7 +17,7 @@ const ssrSafeStorage = createJSONStorage(() => {
       getItem: () => null,
       setItem: () => undefined,
       removeItem: () => undefined,
-    } as Storage
+    } as unknown as Storage
   }
   return localStorage
 })

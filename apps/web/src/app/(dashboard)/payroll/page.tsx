@@ -21,6 +21,8 @@ interface PayrollRecord {
     id: string; employeeId: string; month: number; year: number
     grossSalary: string; totalDeductions: string; netSalary: string
     daysPresent: number; totalWorkingDays: number; lopDays: number; overtimeHours: string
+    basicSalary: string; hra: string; conveyance: string; otherAllowances: string
+    pfEmployee: string; esi: string; professionalTax: string; otherDeductions: string
   }
   employee: { id: string; name: string; employeeCode: string; employeeType: string } | null
 }
