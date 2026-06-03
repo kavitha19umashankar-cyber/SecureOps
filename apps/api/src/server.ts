@@ -25,6 +25,7 @@ import { dashboardRoutes } from './routes/dashboard.js'
 import { tenantRoutes } from './routes/tenants.js'
 import { reportRoutes } from './routes/reports.js'
 import { notificationRoutes } from './routes/notifications.js'
+import { patrolRouteAPI } from './routes/patrol.js'
 
 export async function buildServer() {
   const server = Fastify({
@@ -89,6 +90,7 @@ export async function buildServer() {
 
   await server.register(reportRoutes, { prefix: '/api/v1/reports' })
   await server.register(notificationRoutes, { prefix: '/api/v1/notifications' })
+  await server.register(patrolRouteAPI, { prefix: '/api/v1/patrol-routes' })
 
   server.get('/health', async () => ({ status: 'ok', timestamp: new Date().toISOString() }))
 

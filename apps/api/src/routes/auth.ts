@@ -246,4 +246,42 @@ export const authRoutes: FastifyPluginAsync = async (fastify) => {
 
     return reply.send({ success: true, data: user })
   })
+
+  // Update profile (name, email, phone)
+  fastify.patch('/profile', { preHandler: fastify.authenticate }, async (req, reply) => {
+    const body = z.object({
+      name: z.string().min(2).optional(),
+      email: z.string().email().optional(),
+      phone: z.string().optional(),
+    }).parse(req.body)
+
+    const [updated] = await db.update(users)
+      .set(body)
+      .where(eq(users.id, req.user.sub))
+      .returning()
+
+    return reply.send({
+      success: true,
+      data: { id: updated.id, name: updated.name, email: updated.email, phone: updated.phone, role: updated.role, tenantId: updated.tenantId },
+    })
+  })
+
+  // Change password
+  fastify.post('/change-password', { preHandler: fastify.authenticate }, async (req, reply) => {
+    const body = z.object({
+      currentPassword: z.string(),
+      newPassword: z.string().min(8),
+    }).parse(req.body)
+
+    const user = await db.query.users.findFirst({ where: eq(users.id, req.user.sub) })
+    if (!user || !user.passwordHash) unauthorized('No password set for this account')
+
+    const valid = await verifyPassword(body.currentPassword, user!.passwordHash!)
+    if (!valid) unauthorized('Current password is incorrect')
+
+    const newHash = await hashPassword(body.newPassword)
+    await db.update(users).set({ passwordHash: newHash }).where(eq(users.id, req.user.sub))
+
+    return reply.send({ success: true, message: 'Password updated successfully' })
+  })
 }

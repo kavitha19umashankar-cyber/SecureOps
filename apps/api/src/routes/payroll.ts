@@ -1,6 +1,6 @@
 import type { FastifyPluginAsync } from 'fastify'
 import { z } from 'zod'
-import { eq, and, count } from 'drizzle-orm'
+import { eq, and, count, desc } from 'drizzle-orm'
 import { getDb, payrollRuns, payrollRecords, employees, attendances, salaryStructures } from '@secureops/db'
 import { UserRole } from '@secureops/types'
 import { computePayroll, getWorkingDaysInMonth } from '@secureops/utils'
@@ -230,22 +230,69 @@ export const payrollRoutes: FastifyPluginAsync = async (fastify) => {
     return { success: true, data: rows }
   })
 
+    // List salary structures
+  fastify.get('/salary-structures', { preHandler: fastify.authenticate }, async (req) => {
+    const { tenantId, role } = req.user
+    if (role === UserRole.EMPLOYEE || role === UserRole.CLIENT) forbidden()
+    const rows = await db.select().from(salaryStructures).where(eq(salaryStructures.tenantId, tenantId))
+    return { success: true, data: rows }
+  })
+
   fastify.post('/salary-structures', { preHandler: fastify.authenticate }, async (req, reply) => {
     const { tenantId, role } = req.user
     if (!HR_ROLES.includes(role as UserRole)) forbidden()
 
+    const componentSchema = z.object({
+      name: z.string(),
+      type: z.enum(['earning', 'deduction']),
+      calculationType: z.enum(['fixed', 'percentage_of_basic', 'percentage_of_gross']),
+      value: z.number(),
+      isStatutory: z.boolean(),
+    })
+
     const body = z.object({
       name: z.string().min(2),
-      components: z.array(z.object({
-        name: z.string(),
-        type: z.enum(['earning', 'deduction']),
-        calculationType: z.enum(['fixed', 'percentage_of_basic', 'percentage_of_gross']),
-        value: z.number(),
-        isStatutory: z.boolean(),
-      })),
+      components: z.array(componentSchema),
     }).parse(req.body)
 
     const [created] = await db.insert(salaryStructures).values({ tenantId, ...body }).returning()
     return reply.status(201).send({ success: true, data: created })
+  })
+
+  // Update salary structure
+  fastify.patch('/salary-structures/:id', { preHandler: fastify.authenticate }, async (req, reply) => {
+    const { tenantId, role } = req.user
+    if (!HR_ROLES.includes(role as UserRole)) forbidden()
+
+    const { id } = req.params as { id: string }
+    const componentSchema = z.object({
+      name: z.string(),
+      type: z.enum(['earning', 'deduction']),
+      calculationType: z.enum(['fixed', 'percentage_of_basic', 'percentage_of_gross']),
+      value: z.number(),
+      isStatutory: z.boolean(),
+    })
+    const body = z.object({
+      name: z.string().min(2).optional(),
+      components: z.array(componentSchema).optional(),
+    }).parse(req.body)
+
+    const [updated] = await db.update(salaryStructures)
+      .set(body)
+      .where(and(eq(salaryStructures.id, id), eq(salaryStructures.tenantId, tenantId)))
+      .returning()
+    if (!updated) notFound('Salary structure')
+    return reply.send({ success: true, data: updated })
+  })
+
+  // Delete salary structure
+  fastify.delete('/salary-structures/:id', { preHandler: fastify.authenticate }, async (req, reply) => {
+    const { tenantId, role } = req.user
+    if (!HR_ROLES.includes(role as UserRole)) forbidden()
+
+    const { id } = req.params as { id: string }
+    await db.delete(salaryStructures)
+      .where(and(eq(salaryStructures.id, id), eq(salaryStructures.tenantId, tenantId)))
+    return reply.send({ success: true })
   })
 }

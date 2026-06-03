@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import {
   Shield, Users, MapPin, Calendar, Clock, Camera, AlertTriangle,
   FileText, DollarSign, BarChart3, Settings, LogOut, Building2, Map,
+  Route, ListChecks,
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useAuthStore } from '@/store/auth'
@@ -21,6 +22,7 @@ const navSections = [
       { label: 'Attendance', href: '/attendance', icon: Clock, roles: ALL },
       { label: 'Photo Logs', href: '/photo-logs', icon: Camera, roles: [UserRole.AGENCY_ADMIN, UserRole.OPERATIONS_MANAGER, UserRole.SITE_SUPERVISOR, UserRole.SUPER_ADMIN, UserRole.CLIENT] },
       { label: 'Incidents', href: '/incidents', icon: AlertTriangle, roles: ALL },
+      { label: 'Patrol Routes', href: '/patrol', icon: Route, roles: [UserRole.AGENCY_ADMIN, UserRole.OPERATIONS_MANAGER, UserRole.SITE_SUPERVISOR, UserRole.SUPER_ADMIN] },
     ],
   },
   {
@@ -42,6 +44,7 @@ const navSections = [
     label: 'Finance',
     items: [
       { label: 'Payroll', href: '/payroll', icon: DollarSign, roles: [UserRole.AGENCY_ADMIN, UserRole.HR_MANAGER, UserRole.SUPER_ADMIN] },
+      { label: 'Salary Structures', href: '/payroll/salary-structures', icon: ListChecks, roles: [UserRole.AGENCY_ADMIN, UserRole.HR_MANAGER, UserRole.SUPER_ADMIN] },
       { label: 'Invoices', href: '/invoices', icon: FileText, roles: [UserRole.AGENCY_ADMIN, UserRole.OPERATIONS_MANAGER, UserRole.SUPER_ADMIN, UserRole.CLIENT] },
     ],
   },
