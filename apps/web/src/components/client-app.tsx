@@ -11,7 +11,8 @@ const queryClient = new QueryClient({
 export default function ClientApp({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
-      {children as React.ReactNode}
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      {children as any}
     </QueryClientProvider>
   )
 }
