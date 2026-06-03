@@ -35,12 +35,15 @@ const MapView = dynamic(() => import('@/components/map/operations-map'), {
 export default function LiveMapPage() {
   const [lastRefresh, setLastRefresh] = useState(new Date())
 
-  const { data: sites, isLoading: sitesLoading } = useQuery<SiteHeadcount[]>({
+  const { data: sites, isLoading: sitesLoading, dataUpdatedAt } = useQuery<SiteHeadcount[]>({
     queryKey: ['sites-headcount'],
     queryFn: (): Promise<SiteHeadcount[]> => api.get<{ success: boolean; data: SiteHeadcount[] }>('/reports/sites/headcount').then(r => r.data.data),
     refetchInterval: 30_000,
-    onSettled: () => setLastRefresh(new Date()),
   })
+
+  useEffect(() => {
+    if (dataUpdatedAt) setLastRefresh(new Date(dataUpdatedAt))
+  }, [dataUpdatedAt])
 
   const { data: liveGuards } = useQuery<LiveGuard[]>({
     queryKey: ['live-attendance'],
