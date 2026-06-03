@@ -11,7 +11,7 @@ import {
   real,
   jsonb,
 } from 'drizzle-orm/pg-core'
-import { tenants } from './tenants'
+import { tenants } from './tenants.js'
 
 export const employeeStatusEnum = pgEnum('employee_status', [
   'active',

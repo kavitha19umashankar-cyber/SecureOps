@@ -6,16 +6,16 @@ export {
   createTokenPair,
   isSuperAdmin,
   type TokenConfig,
-} from './jwt'
+} from './jwt.js'
 
 export {
   hasPermission,
   rolesWithPermission,
   ROLE_HIERARCHY,
-} from './rbac'
+} from './rbac.js'
 
 export {
   hashPassword,
   verifyPassword,
   generateOtp,
-} from './password'
+} from './password.js'

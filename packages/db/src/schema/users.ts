@@ -7,7 +7,7 @@ import {
   boolean,
   pgEnum,
 } from 'drizzle-orm/pg-core'
-import { tenants } from './tenants'
+import { tenants } from './tenants.js'
 
 export const userRoleEnum = pgEnum('user_role', [
   'super_admin',

@@ -9,9 +9,9 @@ import {
   jsonb,
   pgEnum,
 } from 'drizzle-orm/pg-core'
-import { tenants } from './tenants'
-import { clients } from './clients'
-import { sites } from './sites'
+import { tenants } from './tenants.js'
+import { clients } from './clients.js'
+import { sites } from './sites.js'
 
 export const invoiceStatusEnum = pgEnum('invoice_status', [
   'draft',

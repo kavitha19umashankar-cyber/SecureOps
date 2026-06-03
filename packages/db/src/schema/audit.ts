@@ -6,7 +6,7 @@ import {
   jsonb,
   text,
 } from 'drizzle-orm/pg-core'
-import { tenants } from './tenants'
+import { tenants } from './tenants.js'
 
 export const auditLogs = pgTable('audit_logs', {
   id: uuid('id').primaryKey().defaultRandom(),

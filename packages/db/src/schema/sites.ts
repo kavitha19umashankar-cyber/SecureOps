@@ -12,9 +12,9 @@ import {
   date,
   numeric,
 } from 'drizzle-orm/pg-core'
-import { tenants } from './tenants'
-import { clients } from './clients'
-import { employees } from './employees'
+import { tenants } from './tenants.js'
+import { clients } from './clients.js'
+import { employees } from './employees.js'
 
 export const siteTypeEnum = pgEnum('site_type', [
   'office',

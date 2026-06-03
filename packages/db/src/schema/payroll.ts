@@ -9,8 +9,8 @@ import {
   jsonb,
   pgEnum,
 } from 'drizzle-orm/pg-core'
-import { tenants } from './tenants'
-import { employees } from './employees'
+import { tenants } from './tenants.js'
+import { employees } from './employees.js'
 
 export const payrollStatusEnum = pgEnum('payroll_status', [
   'draft',

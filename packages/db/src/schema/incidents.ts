@@ -9,10 +9,10 @@ import {
   jsonb,
   pgEnum,
 } from 'drizzle-orm/pg-core'
-import { tenants } from './tenants'
-import { sites } from './sites'
-import { employees } from './employees'
-import { clients } from './clients'
+import { tenants } from './tenants.js'
+import { sites } from './sites.js'
+import { employees } from './employees.js'
+import { clients } from './clients.js'
 
 export const incidentCategoryEnum = pgEnum('incident_category', [
   'theft',

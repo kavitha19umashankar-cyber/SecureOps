@@ -11,10 +11,10 @@ import {
   jsonb,
   pgEnum,
 } from 'drizzle-orm/pg-core'
-import { tenants } from './tenants'
-import { employees } from './employees'
-import { sites } from './sites'
-import { shifts } from './sites'
+import { tenants } from './tenants.js'
+import { employees } from './employees.js'
+import { sites } from './sites.js'
+import { shifts } from './sites.js'
 
 export const attendanceStatusEnum = pgEnum('attendance_status', [
   'present',
