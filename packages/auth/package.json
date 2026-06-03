@@ -3,9 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "exports": { ".": "./src/index.ts" },
-  "main": "./src/index.ts",
-  "scripts": { "type-check": "tsc --noEmit" },
+  "exports": { ".": "./dist/index.js" },
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit"
+  },
   "dependencies": {
     "@secureops/types": "*",
     "jsonwebtoken": "^9.0.2",
