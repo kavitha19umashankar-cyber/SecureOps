@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import { Providers } from '@/components/providers'
+import dynamic from 'next/dynamic'
 
 export const dynamic = 'force-dynamic'
 
@@ -9,11 +9,14 @@ export const metadata: Metadata = {
   description: 'End-to-end management platform for security and housekeeping agencies',
 }
 
+// Load the entire app client-side to avoid React instance conflicts during SSR
+const ClientApp = dynamic(() => import('@/components/client-app'), { ssr: false })
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <Providers>{children}</Providers>
+        <ClientApp>{children}</ClientApp>
       </body>
     </html>
   )
