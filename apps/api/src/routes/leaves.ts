@@ -55,7 +55,7 @@ export const leaveRoutes: FastifyPluginAsync = async (fastify) => {
     }).returning()
 
     // Email HR managers about the leave request (fire-and-forget)
-    db.select({ email: users.email }).from(users)
+    db.select({ email: users.email, role: users.role, employeeId: users.employeeId, name: users.name }).from(users)
       .where(and(
         eq(users.tenantId, tenantId),
         eq(users.isActive, true),
