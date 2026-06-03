@@ -11,12 +11,9 @@ const nextConfig: NextConfig = {
     ],
   },
   webpack: (config) => {
-    const base = path.resolve(__dirname, 'node_modules')
-    config.resolve.alias['react'] = path.join(base, 'react')
-    config.resolve.alias['react-dom'] = path.join(base, 'react-dom')
-    config.resolve.alias['react/jsx-runtime'] = path.join(base, 'react/jsx-runtime')
-    config.resolve.alias['react/jsx-dev-runtime'] = path.join(base, 'react/jsx-dev-runtime')
-    config.resolve.alias['scheduler'] = path.join(base, 'scheduler')
+    // Force single React 19 instance — prevents hook conflicts in monorepo
+    config.resolve.alias['react'] = path.resolve(__dirname, 'node_modules/react')
+    config.resolve.alias['react-dom'] = path.resolve(__dirname, 'node_modules/react-dom')
     return config
   },
 }
