@@ -9,10 +9,13 @@ const nextConfig: NextConfig = {
       { protocol: 'http', hostname: 'localhost' },
     ],
   },
-  webpack: (config) => {
-    // Force single React 19 instance — prevents hook conflicts in monorepo
-    config.resolve.alias['react'] = path.resolve(__dirname, 'node_modules/react')
-    config.resolve.alias['react-dom'] = path.resolve(__dirname, 'node_modules/react-dom')
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      // Externalize React from the server bundle so Node.js loads one shared instance,
+      // preventing duplicate React when Next.js externalizes its own runtime modules.
+      const existing = Array.isArray(config.externals) ? config.externals : (config.externals ? [config.externals] : [])
+      config.externals = [...existing, 'react', 'react-dom', 'react-dom/server']
+    }
     return config
   },
 }
