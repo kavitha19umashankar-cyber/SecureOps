@@ -1,4 +1,4 @@
-import { DocumentStatus, DocumentType, EmployeeStatus, EmployeeType } from './enums'
+import { DocumentStatus, DocumentType, EmployeeStatus, EmployeeType } from './enums.js'
 
 export interface Employee {
   id: string

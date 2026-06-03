@@ -1,4 +1,4 @@
-import { ShiftTemplate, SiteType } from './enums'
+import { ShiftTemplate, SiteType } from './enums.js'
 
 export interface Client {
   id: string

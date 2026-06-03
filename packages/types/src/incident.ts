@@ -1,4 +1,4 @@
-import { IncidentCategory, IncidentSeverity, IncidentStatus } from './enums'
+import { IncidentCategory, IncidentSeverity, IncidentStatus } from './enums.js'
 
 export interface Incident {
   id: string

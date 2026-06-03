@@ -1,4 +1,4 @@
-import { PayrollStatus } from './enums'
+import { PayrollStatus } from './enums.js'
 
 export interface SalaryComponent {
   name: string

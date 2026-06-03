@@ -1,4 +1,4 @@
-import { AttendanceStatus, LeaveStatus, LeaveType } from './enums'
+import { AttendanceStatus, LeaveStatus, LeaveType } from './enums.js'
 
 export interface Attendance {
   id: string

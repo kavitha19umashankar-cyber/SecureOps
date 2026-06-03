@@ -1,4 +1,4 @@
-import { InvoiceStatus } from './enums'
+import { InvoiceStatus } from './enums.js'
 
 export interface InvoiceLineItem {
   employeeId: string
