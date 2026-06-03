@@ -84,8 +84,13 @@ export const patrolRouteAPI: FastifyPluginAsync = async (fastify) => {
       isActive: z.boolean().optional(),
     }).parse(req.body)
 
+    const setValues: Record<string, unknown> = {}
+    if (body.name !== undefined) setValues['name'] = body.name
+    if (body.isActive !== undefined) setValues['isActive'] = body.isActive
+    if (body.checkpoints !== undefined) setValues['checkpoints'] = body.checkpoints
+
     const [updated] = await db.update(patrolRoutes)
-      .set(body)
+      .set(setValues as never)
       .where(and(eq(patrolRoutes.id, id), eq(patrolRoutes.tenantId, tenantId)))
       .returning()
     if (!updated) notFound('Patrol route')
