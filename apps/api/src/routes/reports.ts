@@ -63,7 +63,7 @@ export const reportRoutes: FastifyPluginAsync = async (fastify) => {
       else if (row.status === 'absent') p.absent = row.recordCount
       else if (row.status === 'half_day') p.halfDay = row.recordCount
       else if (row.status === 'on_leave') p.onLeave = row.recordCount
-      else if (row.status === 'loss_of_pay') p.lop = row.recordCount
+      else if ((row.status as string) === 'loss_of_pay') p.lop = row.recordCount
       p.totalOvertimeMinutes += Number(row.overtimeMinutes ?? 0)
       p.totalLateMinutes += Number(row.lateMinutes ?? 0)
     }

@@ -121,6 +121,8 @@ export const siteRoutes: FastifyPluginAsync = async (fastify) => {
       siteId,
       clientId: site!.clientId,
       ...body,
+      billingRatePerDay: String(body.billingRatePerDay),
+      overtimeBillingRate: body.overtimeBillingRate != null ? String(body.overtimeBillingRate) : undefined,
     }).returning()
 
     return reply.status(201).send({ success: true, data: created })
