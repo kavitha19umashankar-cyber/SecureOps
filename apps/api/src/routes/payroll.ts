@@ -230,14 +230,6 @@ export const payrollRoutes: FastifyPluginAsync = async (fastify) => {
     return { success: true, data: rows }
   })
 
-    // List salary structures
-  fastify.get('/salary-structures', { preHandler: fastify.authenticate }, async (req) => {
-    const { tenantId, role } = req.user
-    if (role === UserRole.EMPLOYEE || role === UserRole.CLIENT) forbidden()
-    const rows = await db.select().from(salaryStructures).where(eq(salaryStructures.tenantId, tenantId))
-    return { success: true, data: rows }
-  })
-
   fastify.post('/salary-structures', { preHandler: fastify.authenticate }, async (req, reply) => {
     const { tenantId, role } = req.user
     if (!HR_ROLES.includes(role as UserRole)) forbidden()
