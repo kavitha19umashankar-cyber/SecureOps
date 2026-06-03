@@ -1,14 +1,19 @@
 import type { NextConfig } from 'next'
+import path from 'path'
 
 const nextConfig: NextConfig = {
-  // Only the packages the web app actually imports need transpiling.
-  // @secureops/auth and @secureops/db are server-only; never bundle them here.
   transpilePackages: ['@secureops/types', '@secureops/utils'],
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '**.amazonaws.com' },
       { protocol: 'http', hostname: 'localhost' },
     ],
+  },
+  webpack: (config) => {
+    // Force a single React instance across the monorepo to avoid hook conflicts
+    config.resolve.alias['react'] = path.resolve(__dirname, 'node_modules/react')
+    config.resolve.alias['react-dom'] = path.resolve(__dirname, 'node_modules/react-dom')
+    return config
   },
 }
 
