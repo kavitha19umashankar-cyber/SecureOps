@@ -2,11 +2,13 @@
 
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { FileText, Plus, Send, CheckCircle, CreditCard } from 'lucide-react'
+import { FileText, Plus, Send, CheckCircle, CreditCard, Download } from 'lucide-react'
 import { format, parseISO } from 'date-fns'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { api } from '@/lib/api'
+import { generateInvoicePDF } from '@/lib/invoice-pdf'
+import { useAuthStore } from '@/store/auth'
 
 interface Invoice {
   id: string; invoiceNumber: string; clientId: string; siteId: string
@@ -203,10 +205,38 @@ export default function InvoicesPage() {
               <h3 className="font-semibold text-gray-900">{selectedInvoice.invoiceNumber}</h3>
               <p className="text-sm text-gray-500">Line items breakdown</p>
             </div>
-            <div className="text-right">
+            <div className="flex items-center gap-3">
+              <Button size="sm" variant="secondary" onClick={() => {
+                const inv = selectedInvoice
+                generateInvoicePDF({
+                  invoiceNumber: inv.invoiceNumber,
+                  periodStart: inv.periodStart,
+                  periodEnd: inv.periodEnd,
+                  issueDate: inv.createdAt,
+                  dueDate: inv.dueDate,
+                  clientName: inv.client?.name ?? 'Client',
+                  agencyName: 'SecureOps Agency',
+                  lineItems: inv.lineItems.map(l => ({
+                    employeeName: l.employeeName,
+                    daysWorked: l.daysWorked,
+                    dailyRate: l.dailyRate,
+                    subtotal: l.subtotal,
+                  })),
+                  subtotal: Number(inv.subtotal),
+                  cgst: Number(inv.cgst),
+                  sgst: Number(inv.sgst),
+                  igst: Number(inv.igst),
+                  totalAmount: Number(inv.totalAmount),
+                  paidAmount: Number(inv.paidAmount),
+                })
+              }}>
+                <Download className="w-3.5 h-3.5 mr-1" />PDF
+              </Button>
+              <div className="text-right">
               <p className="text-xs text-gray-500">Paid: {inr(selectedInvoice.paidAmount)} / {inr(selectedInvoice.totalAmount)}</p>
               <div className="w-32 h-1.5 bg-gray-100 rounded-full mt-1.5">
                 <div className="h-full bg-green-500 rounded-full" style={{ width: `${Math.min(100, (Number(selectedInvoice.paidAmount) / Number(selectedInvoice.totalAmount)) * 100)}%` }} />
+              </div>
               </div>
             </div>
           </div>

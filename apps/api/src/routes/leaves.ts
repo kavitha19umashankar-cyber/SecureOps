@@ -1,9 +1,10 @@
 import type { FastifyPluginAsync } from 'fastify'
 import { z } from 'zod'
 import { eq, and } from 'drizzle-orm'
-import { getDb, leaves } from '@secureops/db'
+import { getDb, leaves, users } from '@secureops/db'
 import { UserRole } from '@secureops/types'
 import { notFound, forbidden } from '../lib/errors.js'
+import { emailService } from '../lib/email.js'
 
 export const leaveRoutes: FastifyPluginAsync = async (fastify) => {
   const db = getDb()
@@ -53,6 +54,30 @@ export const leaveRoutes: FastifyPluginAsync = async (fastify) => {
       days,
     }).returning()
 
+    // Email HR managers about the leave request (fire-and-forget)
+    db.select({ email: users.email }).from(users)
+      .where(and(
+        eq(users.tenantId, tenantId),
+        eq(users.isActive, true),
+      ))
+      .then(async allUsers => {
+        const hrEmails = allUsers
+          .filter(u => ['agency_admin', 'hr_manager'].includes(u.role) && u.email)
+          .map(u => u.email as string)
+        const requester = allUsers.find(u => u.employeeId === employeeId)
+        if (hrEmails.length > 0) {
+          emailService.leaveRequested({
+            to: hrEmails,
+            employeeName: requester?.name ?? 'Employee',
+            leaveType: body.leaveType,
+            fromDate: body.fromDate,
+            toDate: body.toDate,
+            days: Math.ceil((new Date(body.toDate).getTime() - new Date(body.fromDate).getTime()) / (1000 * 60 * 60 * 24)) + 1,
+            reason: body.reason,
+          }).catch(console.error)
+        }
+      }).catch(console.error)
+
     return reply.status(201).send({ success: true, data: leave })
   })
 
@@ -94,6 +119,25 @@ export const leaveRoutes: FastifyPluginAsync = async (fastify) => {
     }).where(and(eq(leaves.id, id), eq(leaves.tenantId, tenantId))).returning()
 
     if (!updated) notFound('Leave')
+
+    // Email the employee about the decision (fire-and-forget)
+    db.select({ email: users.email, name: users.name }).from(users)
+      .where(and(eq(users.employeeId, updated.employeeId ?? ''), eq(users.tenantId, tenantId)))
+      .limit(1)
+      .then(async ([empUser]) => {
+        if (empUser?.email) {
+          emailService.leaveDecision({
+            to: empUser.email,
+            employeeName: empUser.name ?? 'Employee',
+            status: body.status as 'approved' | 'rejected',
+            leaveType: updated.leaveType,
+            fromDate: updated.fromDate,
+            toDate: updated.toDate,
+            reason: body.rejectionReason,
+          }).catch(console.error)
+        }
+      }).catch(console.error)
+
     return reply.send({ success: true, data: updated })
   })
 }

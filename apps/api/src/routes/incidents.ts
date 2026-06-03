@@ -1,9 +1,10 @@
 import type { FastifyPluginAsync } from 'fastify'
 import { z } from 'zod'
 import { eq, and } from 'drizzle-orm'
-import { getDb, incidents, incidentTimeline, sites } from '@secureops/db'
+import { getDb, incidents, incidentTimeline, sites, users } from '@secureops/db'
 import { UserRole } from '@secureops/types'
 import { notFound, forbidden } from '../lib/errors.js'
+import { emailService } from '../lib/email.js'
 
 const createIncidentSchema = z.object({
   siteId: z.string().uuid(),
@@ -84,6 +85,22 @@ export const incidentRoutes: FastifyPluginAsync = async (fastify) => {
       note: `Incident raised by ${role}`,
       performedBy: sub,
     })
+
+    // Email notification to agency admins (fire-and-forget)
+    if (body.severity === 'high' || body.severity === 'critical') {
+      db.select({ email: users.email }).from(users)
+        .where(and(eq(users.tenantId, tenantId), eq(users.role, 'agency_admin'), eq(users.isActive, true)))
+        .limit(5)
+        .then(admins => {
+          const emails = admins.map(a => a.email).filter(Boolean) as string[]
+          if (emails.length > 0) {
+            emailService.incidentReported({
+              to: emails, incidentTitle: body.title, category: body.category,
+              severity: body.severity, siteName: site!.name,
+            }).catch(console.error)
+          }
+        }).catch(console.error)
+    }
 
     return reply.status(201).send({ success: true, data: incident })
   })

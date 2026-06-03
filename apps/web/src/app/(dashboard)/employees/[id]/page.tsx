@@ -3,7 +3,9 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Upload, CheckCircle, XCircle, FileText, User, CreditCard, AlertTriangle } from 'lucide-react'
+import { ArrowLeft, Upload, CheckCircle, XCircle, FileText, User, CreditCard, AlertTriangle, Edit2, Save } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { useMutation } from '@tanstack/react-query'
 import Link from 'next/link'
 import { format, parseISO } from 'date-fns'
 import { Badge } from '@/components/ui/badge'
@@ -42,7 +44,7 @@ const statusColor: Record<string, string> = {
 export default function EmployeeDetailPage() {
   const { id } = useParams<{ id: string }>()
   const qc = useQueryClient()
-  const [activeTab, setActiveTab] = useState<'profile' | 'documents' | 'attendance'>('profile')
+  const [activeTab, setActiveTab] = useState<'profile' | 'edit' | 'documents' | 'attendance'>('profile')
   const [uploadDocType, setUploadDocType] = useState('')
   const [uploadFile, setUploadFile] = useState<File | null>(null)
   const [uploadExpiry, setUploadExpiry] = useState('')
@@ -91,6 +93,28 @@ export default function EmployeeDetailPage() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['employee-docs', id] }),
   })
 
+  const { register: regEdit, handleSubmit: handleEdit, reset: resetEdit, formState: { isDirty } } = useForm({
+    defaultValues: employee ? {
+      name: employee.name, phone: employee.phone, email: employee.email ?? '',
+      dob: employee.dob ?? '', gender: employee.gender ?? '',
+      address: employee.address ?? '', employeeType: employee.employeeType,
+      status: employee.status, joiningDate: employee.joiningDate,
+      emergencyContactName: employee.emergencyContactName ?? '',
+      emergencyContactPhone: employee.emergencyContactPhone ?? '',
+      bankAccountNumber: employee.bankAccountNumber ?? '',
+      bankIfsc: employee.bankIfsc ?? '', bankName: employee.bankName ?? '',
+      uanNumber: employee.uanNumber ?? '', esiNumber: employee.esiNumber ?? '',
+    } : {},
+  })
+
+  const updateEmployee = useMutation({
+    mutationFn: (data: object) => api.patch(`/employees/${id}`, data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['employee', id] })
+      setActiveTab('profile')
+    },
+  })
+
   if (isLoading) {
     return <div className="space-y-4">{Array.from({ length: 3 }).map((_, i) => <div key={i} className="bg-white rounded-xl border border-gray-200 h-32 animate-pulse" />)}</div>
   }
@@ -124,10 +148,23 @@ export default function EmployeeDetailPage() {
 
       {/* Tabs */}
       <div className="flex gap-1 bg-gray-100 p-1 rounded-xl w-fit">
-        {(['profile', 'documents', 'attendance'] as const).map(tab => (
-          <button key={tab} onClick={() => setActiveTab(tab)}
+        {(['profile', 'edit', 'documents', 'attendance'] as const).map(tab => (
+          <button key={tab} onClick={() => {
+            setActiveTab(tab)
+            if (tab === 'edit' && employee) resetEdit({
+              name: employee.name, phone: employee.phone, email: employee.email ?? '',
+              dob: employee.dob ?? '', gender: employee.gender ?? '',
+              address: employee.address ?? '', employeeType: employee.employeeType,
+              status: employee.status, joiningDate: employee.joiningDate,
+              emergencyContactName: employee.emergencyContactName ?? '',
+              emergencyContactPhone: employee.emergencyContactPhone ?? '',
+              bankAccountNumber: employee.bankAccountNumber ?? '',
+              bankIfsc: employee.bankIfsc ?? '', bankName: employee.bankName ?? '',
+              uanNumber: employee.uanNumber ?? '', esiNumber: employee.esiNumber ?? '',
+            })
+          }}
             className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors capitalize ${activeTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-            {tab}
+            {tab === 'edit' ? <span className="flex items-center gap-1"><Edit2 className="w-3 h-3" />Edit</span> : tab}
           </button>
         ))}
       </div>
@@ -197,6 +234,74 @@ export default function EmployeeDetailPage() {
             </Card>
           )}
         </div>
+      )}
+
+      {/* Edit tab */}
+      {activeTab === 'edit' && (
+        <form onSubmit={handleEdit(data => updateEmployee.mutate(data))} className="space-y-5 max-w-3xl">
+          <Card>
+            <CardHeader><CardTitle><User className="w-4 h-4 inline mr-2" />Personal Details</CardTitle></CardHeader>
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div><label className="label">Full Name</label><input {...regEdit('name')} className="input" /></div>
+              <div><label className="label">Phone</label><input {...regEdit('phone')} className="input" /></div>
+              <div><label className="label">Email</label><input type="email" {...regEdit('email')} className="input" /></div>
+              <div><label className="label">Date of Birth</label><input type="date" {...regEdit('dob')} className="input" /></div>
+              <div>
+                <label className="label">Gender</label>
+                <select {...regEdit('gender')} className="input">
+                  <option value="">Select</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="label">Employee Type</label>
+                <select {...regEdit('employeeType')} className="input">
+                  {['security_guard','armed_guard','supervisor','housekeeper','housekeeping_supervisor'].map(t => (
+                    <option key={t} value={t}>{t.replace(/_/g,' ')}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="label">Status</label>
+                <select {...regEdit('status')} className="input">
+                  {['active','on_leave','suspended','terminated'].map(s => (
+                    <option key={s} value={s}>{s.replace('_',' ')}</option>
+                  ))}
+                </select>
+              </div>
+              <div><label className="label">Joining Date</label><input type="date" {...regEdit('joiningDate')} className="input" /></div>
+              <div className="sm:col-span-2"><label className="label">Address</label><input {...regEdit('address')} className="input" /></div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader><CardTitle><AlertTriangle className="w-4 h-4 inline mr-2" />Emergency Contact</CardTitle></CardHeader>
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div><label className="label">Contact Name</label><input {...regEdit('emergencyContactName')} className="input" /></div>
+              <div><label className="label">Contact Phone</label><input {...regEdit('emergencyContactPhone')} className="input" /></div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader><CardTitle><CreditCard className="w-4 h-4 inline mr-2" />Bank & Statutory</CardTitle></CardHeader>
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div><label className="label">Bank Name</label><input {...regEdit('bankName')} className="input" /></div>
+              <div><label className="label">Account Number</label><input {...regEdit('bankAccountNumber')} className="input" /></div>
+              <div><label className="label">IFSC Code</label><input {...regEdit('bankIfsc')} className="input" /></div>
+              <div><label className="label">UAN Number</label><input {...regEdit('uanNumber')} className="input" /></div>
+              <div><label className="label">ESI Number</label><input {...regEdit('esiNumber')} className="input" /></div>
+            </CardContent>
+          </Card>
+
+          <div className="flex gap-3">
+            <Button type="submit" loading={updateEmployee.isPending}>
+              <Save className="w-4 h-4 mr-1.5" />Save Changes
+            </Button>
+            <Button type="button" variant="secondary" onClick={() => setActiveTab('profile')}>Cancel</Button>
+          </div>
+        </form>
       )}
 
       {/* Documents tab */}
