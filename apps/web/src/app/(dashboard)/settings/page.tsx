@@ -29,7 +29,7 @@ export default function SettingsPage() {
     onSuccess: (res) => {
       const updated = res.data?.data
       if (updated && user) {
-        login({ user: { ...user, ...updated }, tokens: { accessToken: '', refreshToken: '' } })
+        login({ user: { ...user, ...updated }, tokens: { accessToken: '', refreshToken: '', expiresIn: 900 } })
       }
       setSaved(true)
       setTimeout(() => setSaved(false), 2000)
