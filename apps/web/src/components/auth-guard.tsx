@@ -1,25 +1,31 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { useAuthStore } from '@/store/auth'
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter()
-  const { isAuthenticated } = useAuthStore()
+  const pathname = usePathname()
+  const { isAuthenticated, user } = useAuthStore()
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
-    // Manually trigger Zustand persist hydration from localStorage
     useAuthStore.persist.rehydrate()
     setHydrated(true)
   }, [])
 
   useEffect(() => {
-    if (hydrated && !isAuthenticated) {
+    if (!hydrated) return
+    if (!isAuthenticated) {
       router.replace('/login')
+      return
     }
-  }, [hydrated, isAuthenticated, router])
+    // Redirect clients who land on /dashboard to their portal
+    if (user?.role === 'client' && pathname === '/dashboard') {
+      router.replace('/client-portal')
+    }
+  }, [hydrated, isAuthenticated, user, pathname, router])
 
   if (!hydrated || !isAuthenticated) {
     return (

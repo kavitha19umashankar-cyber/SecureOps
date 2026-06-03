@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import {
   Shield, Users, MapPin, Calendar, Clock, Camera, AlertTriangle,
   FileText, DollarSign, BarChart3, Settings, LogOut, Building2, Map,
-  Route, ListChecks,
+  Route, ListChecks, LayoutDashboard,
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useAuthStore } from '@/store/auth'
@@ -17,7 +17,8 @@ const navSections = [
   {
     label: 'Operations',
     items: [
-      { label: 'Dashboard', href: '/dashboard', icon: BarChart3, roles: ALL },
+      { label: 'My Portal', href: '/client-portal', icon: LayoutDashboard, roles: [UserRole.CLIENT] },
+      { label: 'Dashboard', href: '/dashboard', icon: BarChart3, roles: [UserRole.AGENCY_ADMIN, UserRole.HR_MANAGER, UserRole.OPERATIONS_MANAGER, UserRole.SITE_SUPERVISOR, UserRole.SUPER_ADMIN] },
       { label: 'Live Map', href: '/live-map', icon: Map, roles: [UserRole.AGENCY_ADMIN, UserRole.OPERATIONS_MANAGER, UserRole.SITE_SUPERVISOR, UserRole.SUPER_ADMIN, UserRole.CLIENT] },
       { label: 'Attendance', href: '/attendance', icon: Clock, roles: ALL },
       { label: 'Photo Logs', href: '/photo-logs', icon: Camera, roles: [UserRole.AGENCY_ADMIN, UserRole.OPERATIONS_MANAGER, UserRole.SITE_SUPERVISOR, UserRole.SUPER_ADMIN, UserRole.CLIENT] },

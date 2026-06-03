@@ -9,6 +9,7 @@ import { Shield } from 'lucide-react'
 import { useAuthStore } from '@/store/auth'
 import { api } from '@/lib/api'
 import type { LoginResponse } from '@secureops/types'
+import { UserRole } from '@secureops/types'
 
 const schema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -31,7 +32,9 @@ export default function LoginPage() {
     try {
       const res = await api.post<{ success: boolean; data: LoginResponse }>('/auth/login', data)
       login(res.data.data)
-      router.push('/dashboard')
+      // Redirect clients to their portal, everyone else to dashboard
+      const role = res.data.data.user.role
+      router.push(role === UserRole.CLIENT ? '/client-portal' : '/dashboard')
     } catch (e: unknown) {
       const err = e as { response?: { data?: { message?: string } } }
       setError(err.response?.data?.message ?? 'Login failed. Check your credentials.')
