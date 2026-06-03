@@ -37,10 +37,10 @@ export default function LiveMapPage() {
 
   const { data: sites, isLoading: sitesLoading } = useQuery<SiteHeadcount[]>({
     queryKey: ['sites-headcount'],
-    queryFn: () => api.get<{ success: boolean; data: SiteHeadcount[] }>('/reports/sites/headcount').then(r => r.data.data),
+    queryFn: (): Promise<SiteHeadcount[]> => api.get<{ success: boolean; data: SiteHeadcount[] }>('/reports/sites/headcount').then(r => r.data.data),
     refetchInterval: 30_000,
     onSettled: () => setLastRefresh(new Date()),
-  } as Parameters<typeof useQuery>[0])
+  })
 
   const { data: liveGuards } = useQuery<LiveGuard[]>({
     queryKey: ['live-attendance'],
