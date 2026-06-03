@@ -2,9 +2,12 @@ import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
 import * as schema from './schema/index.js'
 
-let _db: ReturnType<typeof drizzle> | null = null
+type Schema = typeof schema
+type DrizzleDb = ReturnType<typeof drizzle<Schema>>
 
-export function getDb(databaseUrl?: string) {
+let _db: DrizzleDb | null = null
+
+export function getDb(databaseUrl?: string): DrizzleDb {
   if (_db) return _db
 
   const url = databaseUrl ?? process.env['DATABASE_URL']
@@ -12,8 +15,8 @@ export function getDb(databaseUrl?: string) {
 
   const client = postgres(url, { max: 10 })
   const isDev = process.env['NODE_ENV'] === 'development'
-  _db = drizzle(client, { schema, logger: isDev })
+  _db = drizzle<Schema>(client, { schema, logger: isDev })
   return _db
 }
 
-export type Db = ReturnType<typeof getDb>
+export type Db = DrizzleDb
