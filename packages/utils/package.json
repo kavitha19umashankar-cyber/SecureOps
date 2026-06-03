@@ -1,0 +1,11 @@
+{
+  "name": "@secureops/utils",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "main": "./src/index.ts",
+  "scripts": { "type-check": "tsc --noEmit" },
+  "dependencies": { "@secureops/types": "*" },
+  "devDependencies": { "typescript": "^5.7.2" }
+}

@@ -1,0 +1,55 @@
+{
+  "expo": {
+    "name": "SecureOps",
+    "slug": "secureops",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1d4ed8"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.secureops.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "SecureOps needs your location to verify you are at the site before clocking in.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "SecureOps uses your location to track attendance and patrol routes.",
+        "NSCameraUsageDescription": "SecureOps needs camera access for photo check-ins and incident documentation.",
+        "NSPhotoLibraryUsageDescription": "SecureOps may access photos for incident reports."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1d4ed8"
+      },
+      "package": "com.secureops.app",
+      "permissions": [
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.CAMERA",
+        "android.permission.FOREGROUND_SERVICE"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow SecureOps to use your location for attendance verification."
+        }
+      ],
+      ["expo-camera", { "cameraPermission": "Allow SecureOps to access your camera for photo check-ins." }],
+      "expo-secure-store"
+    ],
+    "scheme": "secureops",
+    "extra": {
+      "router": { "origin": false },
+      "eas": { "projectId": "your-eas-project-id" }
+    }
+  }
+}

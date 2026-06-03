@@ -1,0 +1,19 @@
+{
+  "name": "@secureops/auth",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "main": "./src/index.ts",
+  "scripts": { "type-check": "tsc --noEmit" },
+  "dependencies": {
+    "@secureops/types": "*",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/bcryptjs": "^2.4.6",
+    "typescript": "^5.7.2"
+  }
+}
