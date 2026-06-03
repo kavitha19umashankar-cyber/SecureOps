@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router'
-import { Home, Clock, Camera, AlertTriangle, User } from 'lucide-react-native'
+import { Home, Clock, Camera, AlertTriangle, User, CalendarDays, Route } from 'lucide-react-native'
 
 export default function TabLayout() {
   return (
@@ -32,6 +32,14 @@ export default function TabLayout() {
       <Tabs.Screen
         name="incidents"
         options={{ title: 'Incidents', tabBarIcon: ({ color }) => <AlertTriangle size={22} color={color} /> }}
+      />
+      <Tabs.Screen
+        name="leaves"
+        options={{ title: 'Leaves', tabBarIcon: ({ color }) => <CalendarDays size={22} color={color} /> }}
+      />
+      <Tabs.Screen
+        name="patrol"
+        options={{ title: 'Patrol', tabBarIcon: ({ color }) => <Route size={22} color={color} /> }}
       />
       <Tabs.Screen
         name="profile"

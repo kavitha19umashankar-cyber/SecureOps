@@ -56,6 +56,23 @@ export const leaveRoutes: FastifyPluginAsync = async (fastify) => {
     return reply.status(201).send({ success: true, data: leave })
   })
 
+  // Cancel own leave (employee)
+  fastify.patch('/:id/cancel', { preHandler: fastify.authenticate }, async (req, reply) => {
+    const { tenantId, employeeId, role } = req.user
+    if (role !== UserRole.EMPLOYEE || !employeeId) forbidden()
+    const { id } = req.params as { id: string }
+
+    const leave = await db.query.leaves.findFirst({
+      where: and(eq(leaves.id, id), eq(leaves.employeeId, employeeId), eq(leaves.tenantId, tenantId)),
+    })
+    if (!leave) notFound('Leave')
+    if (leave!.status !== 'pending') forbidden()
+
+    const [updated] = await db.update(leaves).set({ status: 'cancelled' })
+      .where(eq(leaves.id, id)).returning()
+    return reply.send({ success: true, data: updated })
+  })
+
   fastify.patch('/:id/approve', { preHandler: fastify.authenticate }, async (req, reply) => {
     const { tenantId, role, sub } = req.user
     const allowed = [UserRole.SITE_SUPERVISOR, UserRole.HR_MANAGER, UserRole.AGENCY_ADMIN, UserRole.SUPER_ADMIN]
