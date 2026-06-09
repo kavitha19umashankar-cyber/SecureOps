@@ -15,6 +15,12 @@ if (!DATABASE_URL) {
   process.exit(1)
 }
 
+const SUPER_ADMIN_PASSWORD = process.env['SUPER_ADMIN_PASSWORD']
+if (!SUPER_ADMIN_PASSWORD) {
+  console.error('SUPER_ADMIN_PASSWORD is not set in .env')
+  process.exit(1)
+}
+
 const client = postgres(DATABASE_URL, { max: 1 })
 const db = drizzle(client, { schema })
 
@@ -35,13 +41,13 @@ async function seed() {
       tenantId: null,
       role: 'super_admin',
       name: 'Super Admin',
-      email: 'admin@secureops.in',
-      passwordHash: await hash('Admin@123'),
+      email: process.env['SUPER_ADMIN_EMAIL'] ?? 'admin@secureops.in',
+      passwordHash: await hash(SUPER_ADMIN_PASSWORD!),
       isActive: true,
     }).returning()
     console.log('✅ Super Admin created')
-    console.log('   Email   : admin@secureops.in')
-    console.log('   Password: Admin@123\n')
+    console.log('   Email   :', process.env['SUPER_ADMIN_EMAIL'] ?? 'admin@secureops.in')
+    console.log('   Password: (set via SUPER_ADMIN_PASSWORD env var)\n')
   } else {
     console.log('ℹ️  Super Admin already exists, skipping\n')
   }
@@ -86,12 +92,12 @@ async function seed() {
       name: 'Rajesh Kumar',
       email: 'admin@quickguard.in',
       phone: '9876543210',
-      passwordHash: await hash('Admin@123'),
+      passwordHash: await hash(SUPER_ADMIN_PASSWORD!),
       isActive: true,
     })
     console.log('✅ Agency Admin created')
     console.log('   Email   : admin@quickguard.in')
-    console.log('   Password: Admin@123\n')
+    console.log('   Password: (set via SUPER_ADMIN_PASSWORD env var)\n')
   } else {
     console.log('ℹ️  Agency Admin already exists, skipping\n')
   }
@@ -108,12 +114,12 @@ async function seed() {
       name: 'Priya Sharma',
       email: 'hr@quickguard.in',
       phone: '9876543211',
-      passwordHash: await hash('Admin@123'),
+      passwordHash: await hash(SUPER_ADMIN_PASSWORD!),
       isActive: true,
     })
     console.log('✅ HR Manager created')
     console.log('   Email   : hr@quickguard.in')
-    console.log('   Password: Admin@123\n')
+    console.log('   Password: (set via SUPER_ADMIN_PASSWORD env var)\n')
   }
 
   // ── 5. Demo Client ────────────────────────────────────────────────────────
@@ -276,15 +282,15 @@ async function seed() {
   console.log('🚀 Seed complete! You can now log in:\n')
   console.log('  Super Admin')
   console.log('  URL      : http://localhost:3000/login')
-  console.log('  Email    : admin@secureops.in')
-  console.log('  Password : Admin@123\n')
+  console.log('  Email    :', process.env['SUPER_ADMIN_EMAIL'] ?? 'admin@secureops.in')
+  console.log('  Password : (check SUPER_ADMIN_PASSWORD in your .env)\n')
   console.log('  Agency Admin (QuickGuard)')
   console.log('  URL      : http://localhost:3000/login')
   console.log('  Email    : admin@quickguard.in')
-  console.log('  Password : Admin@123\n')
+  console.log('  Password : (check SUPER_ADMIN_PASSWORD in your .env)\n')
   console.log('  HR Manager')
   console.log('  Email    : hr@quickguard.in')
-  console.log('  Password : Admin@123\n')
+  console.log('  Password : (check SUPER_ADMIN_PASSWORD in your .env)\n')
   console.log('  Guard employees (OTP login via mobile):')
   console.log('  Phones   : 9000000001, 9000000002, 9000000003')
   console.log('  Agency code: quickguard')

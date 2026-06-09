@@ -7,14 +7,17 @@ import {
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { randomUUID } from 'crypto'
 
+const accessKeyId = process.env['AWS_ACCESS_KEY_ID']
+const secretAccessKey = process.env['AWS_SECRET_ACCESS_KEY']
+if (!accessKeyId || !secretAccessKey) {
+  throw new Error('AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY must be set')
+}
+
 const s3 = new S3Client({
   region: process.env['AWS_REGION'] ?? 'ap-south-1',
-  endpoint: process.env['S3_ENDPOINT'],  // for MinIO in dev
+  endpoint: process.env['S3_ENDPOINT'],
   forcePathStyle: !!process.env['S3_ENDPOINT'],
-  credentials: {
-    accessKeyId: process.env['AWS_ACCESS_KEY_ID'] ?? 'minioadmin',
-    secretAccessKey: process.env['AWS_SECRET_ACCESS_KEY'] ?? 'minioadmin',
-  },
+  credentials: { accessKeyId, secretAccessKey },
 })
 
 const BUCKET = process.env['AWS_S3_BUCKET'] ?? 'secureops-files'
